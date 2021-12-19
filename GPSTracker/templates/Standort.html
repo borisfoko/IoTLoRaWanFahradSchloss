@@ -1,0 +1,132 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Standort{% endblock %}
+{% load static %}
+{% block header %}
+	<<link rel="stylesheet" type="text/css"  href="{% static 'main/leaflet/leaflet.css' %}" />
+    <script src="{% static 'main/leaflet/leaflet.js' %}"></script>
+{% endblock %}
+{% block content %}
+<body>
+<div id="mapid" style="z-index: 1; width: 100%; height: 400px;"></div>
+<br>
+<table id="Tracker" class="stack">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>ID</th>
+      <th>Status</th>
+      <th style="display: None">Koordinaten</th>
+        <th>Höhe über nn</th>
+      <th>Letzte Rückmeldung</th>
+        <th>Empfangsstatus</th>
+      <th >Optionen</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for t in tracker %}
+    <tr>
+      <td>{{t.0}}</td>
+      <td><a title="Tracker Daten anzeigen" href="/main/showEdit/{{t.1}}">{{t.1}}</a></td>
+      <td>{% if t.2 == "Geöffnet" %}            <i style="color: #3adb76" class="fi-unlock">{{t.2}}</i> {% endif %}
+          {% if t.2 == "Abgeschlossen" %}       <i style="color: #cc4b37" class="fi-lock">{{t.2}}</i>   {% endif %}
+          {% if t.2 == "Route aufzeichnen" %}   <i style="color: #ffae00" class="fi-map">{{t.2}}</i> {% endif %}
+      </td>
+      <td style="display: None">{{t.3}}</td>
+      <td>{{t.4}}</td>
+        <td>{{t.5}}</td>
+        <td>{% if t.6 == "Verbindung aktiv" %}          <i style="color: #3adb76" class="fi-rss">{{t.6}}</i>{% endif %}
+            {% if t.6 == "Verbindung unterbrochen" %}   <i style="color: #cc4b37" class="fi-x">{{t.6}}</i>{% endif %}
+            {% if t.6 == "GPS Funkloch" %}              <i style="color: #ffae00" class="fi-alert">{{t.6}}</i>{% endif %}
+        </td>
+      <td ><a href="/main/open/{{t.1}}" title="Schloss Öffnen" class="button success hollow" style="margin: 3px" > <i class="fi-unlock"></i></a>
+          <a href="/main/close/{{t.1}}" title="Schloss abschließen" class="button alert hollow" style="margin: 3px" > <i class="fi-lock"></i></a>
+          <a href="/main/record/{{t.1}}" title= "Route starten" class="button warning hollow" style="margin: 3px" > <i class="fi-map"></i></a>
+          <a title= "Auf Karte anzeigen" onclick="showMarker({{t.3}})" class="button primary hollow" style="margin: 3px" > <i class="fi-magnifying-glass"></i></a></td>
+    </tr>
+
+  {%endfor%}
+  </tbody>
+</table>
+
+<script>
+
+	var mymap = L.map('mapid').setView([0,0], 13);
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+  var oTable = document.getElementById('Tracker');
+
+    var rowLength = oTable.rows.length;
+
+    for (i = 1; i < rowLength; i++){
+
+   //gets cells of current row
+   var oCells = oTable.rows.item(i).cells;
+
+   //gets amount of cells of current row
+   var cellLength = oCells.length;
+    var id = oCells.item(1).innerText;
+    var Name = oCells.item(0).innerHTML;
+    var Koordinaten = oCells.item(3).innerHTML;
+
+    var Status = oCells.item(2).innerText;
+
+    var res = Koordinaten.split(",");
+     if(res[0] != 'None' && res[1] != 'None')
+     {
+      var marker = L.marker(res).addTo(mymap);
+        if(Status == "Geöffnet")
+        {
+              marker.bindPopup("<b style='color: #3adb76'>"+Name+"<i style='float: right' class='fi-unlock'></i></b><br><a class='button tiny alert hollow' href='/main/close/"+id+"'><i class='fi-lock'></i></a><a class='button tiny warning hollow' href='/main/record/"+id+"'><i class='fi-map'></i></a></div></div>").openPopup();
+        }
+        else if(Status == "Abgeschlossen")
+        {
+              marker.bindPopup("<b style='color: #cc4b37'>"+Name+"<i style='float: right' class='fi-lock'></i></b><br><a class='button tiny success hollow' href='/main/open/"+id+"'><i class='fi-unlock'></i></a><a class='button tiny warning hollow' href='/main/record/"+id+"'><i class='fi-map'></i></a></div></div>").openPopup();
+        }
+        else if(Status == "Route aufzeichnen")
+        {
+              marker.bindPopup("<b style='color: #ffae00'>"+Name+"<i style='float: right' class='fi-map'></i></b><br><a class='button tiny success hollow' href='/main/open/"+id+"'><i class='fi-unlock'></i></a><a class='button tiny alert hollow' href='/main/close/"+id+"'><i class='fi-lock'></i></a></div></div>").openPopup();
+        }
+     }
+
+
+  }
+ if(rowLength > 1)
+ {
+    var oCells = oTable.rows.item(1).cells;
+    var Koordinaten = oCells.item(3).innerHTML;
+    var Kordis = Koordinaten.split(",");
+    if(Kordis.length == 2)
+    {
+        if(isNumber(Kordis[0]) && isNumber(Kordis[1]))
+        {
+            mymap.panTo(new L.LatLng(Kordis[0], Kordis[1]));
+        }
+    }
+ }
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function showMarker(lat, long)
+{
+
+mymap.panTo(new L.LatLng(lat, long));
+
+}
+</script>
+
+
+
+</body>
+
+{% endblock %}
+

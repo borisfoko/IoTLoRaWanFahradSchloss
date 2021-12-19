@@ -1,0 +1,20 @@
+-------------   Server Zugriff über SSH:   ---------------------
+
+Anwendung:
+PuTTY
+
+Server IP & Port:
+141.45.92.196  &  22
+
+Server Clone über Git:
+git clone ssh://student@141.45.92.196/~/LoRaWanGit
+
+Username:
+student
+
+Passwort:
+UBsCh&Oi;_xkWq42r9%[
+
+Run Server:
+-->$ cd Projektrepo/Server/LoraWanGit
+-->$ sudo nohup python3 manage.py runserver lora1.f2.htw-berlin.de:8000 &

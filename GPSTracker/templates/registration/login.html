@@ -1,0 +1,48 @@
+<!-- templates/registration/login.html -->
+
+
+{% load static %}
+ <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.min.css' %}">
+     <script src="{% static 'main/js/app.js' %}.js"></script>
+     <script src="{% static 'main/js/vendor/foundation.js' %}.js"></script>
+     <script src="{% static 'main/js/vendor/what-input.js' %}.js"></script>
+</head>
+
+
+ <body style="background-image: url('{% static 'main/bilder/background.jpg' %}')">
+    <div id="login" class="callout secondary" style="margin: auto; margin-top: 100px; width: 400px; text-align: center">
+        <form class="form-horizontal" name="LoginForm"  method="post">
+            <h5 style="text-align: center">Anmelden</h5>
+            {% csrf_token %}
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+            {% endif %}
+            {% if form.errors %}
+            <div class="callout alert" >
+              Nutzername oder Passwort fehlerhaft.
+            </div>
+            {% endif %}
+            <div class="control-group">
+                <label class="control-label" for="username" style="float: left">Nutzername</label>
+                <div class="controls">
+                    <input required aria-describedby="exampleHelpText" type="text" id="username" name="username"  placeholder="Nutzername">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password" style="float: left">Passwort</label>
+                <div class="controls">
+                    <input required type="password" name="password" id="password" placeholder="Passwort" aria-describedby="exampleHelpText">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="button hollow primary" style="width: 100%; margin: auto">Anmelden</button>
+                </div>
+            </div>
+        <a href="/main/signup" class="golink" style="margin: 10px; align: center">Noch nicht registriert ?</a>
+        </form>
+    </div>
+ </body>

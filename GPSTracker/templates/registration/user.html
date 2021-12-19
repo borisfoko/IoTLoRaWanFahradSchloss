@@ -1,0 +1,32 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Benutzerdaten{% endblock %}
+
+{% block content %}
+
+<body>
+<form action="/main/user/" method="post">
+    {% csrf_token %}
+      {% if form.errors %}
+            <div class="callout alert" >
+            <ul style="list-style-type: none">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+            </div>
+            {% endif %}
+ <label>E-Mail adresse: </label>
+    {{ form.email }}
+
+    <input class="button hollow primary" type="submit" value="Speichern">
+</form>
+
+
+</body>
+
+{% endblock %}
+

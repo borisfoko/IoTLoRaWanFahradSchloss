@@ -1,0 +1,64 @@
+﻿<!-- templates/base.html   http-equiv="refresh" content="30"-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}GPS Tracker{% endblock %}</title>
+{% load static %}
+ <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/custom.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation-icons/foundation-icons.css'%}">
+
+     <script src="{% static 'main/js/vendor/jquery.js' %}"></script>
+     <script src="{% static 'main/js/vendor/foundation.js' %}"></script>
+    <script src="{% static 'main/js/custom.js' %}"></script>
+
+	{% block header %}{% endblock %}
+</head>
+<body style="background-image: url('{% static 'main/bilder/background.jpg' %}')">
+{% if user.is_authenticated %}
+
+
+
+    <div  class="callout secondary" style="margin: auto; margin-top: 10px; width: 80%">
+
+            <div style="float: right; margin-bottom: 5px; padding: 0px;">
+                <div class="dropdown">
+                    <button onclick="myFunction('myDropdown')" class="dropbtn button primary">{{ user.username }} <i class="fi-list">{{t.6}}</i></button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="{% url 'logout' %}">Abmelden</a>
+                        <a href="/main/reset">Passwort ändern</a>
+                        <a href="/main/user">E-Mail ändern</a>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <ul class="menu" >
+                      <li {% if  request.path  == '/main/position/' %}class="is-active"{% endif %}><a href="/main/position/">Standort</a></li>
+                      <li {% if  request.path  == '/main/route/' %}class="is-active"{% endif %}><a href="/main/route">Routen</a></li>
+                      <li {% if  request.path  == '/main/add/' %}class="is-active"{% endif %}><a href="/main/add">Hinzufügen</a></li>
+                      <li {% if  request.path  == '/main/statistic/' %}class="is-active"{% endif %}><a href="/main/statistic">Empfangsstatistik</a></li>
+                        {% if request.path == '/main/reset/' %} <li class="is-active"><a href="#">Passwort ändern</a></li> {% endif %}
+                        {% if request.path == '/main/user/' %} <li class="is-active"><a href="#">E-Mail ändern</a></li> {% endif %}
+                {% block menu %}
+                {% endblock %}
+            </ul>
+
+          <main>
+            {% block content  %}
+            {% endblock %}
+          </main>
+    </div>
+{% else %}
+	<div style="margin: auto; width: 50%; height: auto; text-align: center; margin-top: 20%" class="callout small">
+		<p>Sie sind nicht angemeldet.</p>
+		<a href="/accounts/login" class="button hollow primary">Anmelden</a>
+	</div>
+{% endif %}
+
+</body>
+</html>

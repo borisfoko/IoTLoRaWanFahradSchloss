@@ -1,0 +1,45 @@
+﻿
+{% block title %}Sign Up{% endblock %}
+
+{% load static %}
+ <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/foundation.min.css' %}">
+     <script src="{% static 'main/js/app.js' %}.js"></script>
+     <script src="{% static 'main/js/vendor/foundation.js' %}.js"></script>
+     <script src="{% static 'main/js/vendor/what-input.js' %}.js"></script>
+</head>
+
+
+ <body style="background-image: url('{% static 'main/bilder/background.jpg' %}')">
+    <div id="login" class="callout secondary" style="margin: auto; margin-top: 100px; width: 400px">
+         <form method="post">
+              <h5 style="text-align: center">Registrieren</h5>
+            {% csrf_token %}
+               {% if form.errors %}
+            <div class="callout alert" >
+            <ul style="list-style-type: none">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+            </div>
+            {% endif %}
+            <label>Nutzername:
+            {{ form.username }}</label>
+           {{ form.email.label_tag }}
+            {{ form.email }}
+            <label>Passwort:
+            {{ form.password1 }}</label>
+            <label>Passwort wiederholen:
+            {{ form.password2 }}</label>
+
+
+
+            <button class="button hollow primary" style="width: 100%" type="submit">Registrieren</button>
+             <a href="/accounts/login" class="golink">Zurück zur Anmeldung</a>
+     </form>
+    </div>
+ </body>
